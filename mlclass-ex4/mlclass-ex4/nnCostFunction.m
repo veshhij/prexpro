@@ -61,7 +61,9 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
-
+m
+size( Theta1 )
+size( Theta2 )
 
 
 
