@@ -62,8 +62,8 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 %m
-%size( Theta1 )
-%size( Theta2 )
+%size( Theta1 ) %25 401
+%size( Theta2 ) %10 26
 
 a2 = sigmoid([ones(m, 1) X] * Theta1');
 hip = sigmoid([ones(m, 1) a2] * Theta2');
@@ -74,8 +74,8 @@ for i = 1:m
 end
 
 J = -sum( sum( Y .* log( hip ) + ( 1 - Y ) .* log( 1 - hip ) ) ) / m;
-
-
+R = lambda * ( sum( sum( Theta1( :, 2:end ) .^2 ) ) + sum( sum( Theta2( :, 2:end ) .^2 ) ) ) / ( 2 * m );
+J = J + R;
 
 
 
