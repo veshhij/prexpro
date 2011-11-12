@@ -13,7 +13,7 @@ function [J grad] = nnCostFunction(nn_params, ...
 %   The returned parameter grad should be a "unrolled" vector of the
 %   partial derivatives of the neural network.
 %
-
+%size( nn_params )
 % Reshape nn_params back into the parameters Theta1 and Theta2, the weight matrices
 % for our 2 layer neural network
 Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
@@ -21,6 +21,9 @@ Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
 
 Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
                  num_labels, (hidden_layer_size + 1));
+
+%size( Theta1 )
+%size( Theta2 )
 
 % Setup some useful variables
 m = size(X, 1);
@@ -62,22 +65,56 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 %m
+% size( X ) 5000 400
 %size( Theta1 ) %25 401
 %size( Theta2 ) %10 26
 
-a2 = sigmoid([ones(m, 1) X] * Theta1');
-hip = sigmoid([ones(m, 1) a2] * Theta2');
+a1 = [ones(m, 1) X]; % 5000 401
+z2 = a1 * Theta1'; % 5000 25
+a2 = sigmoid( z2 );
+a2 = [ones(m, 1) a2]; % 5000 26
+z3 = a2 * Theta2';
+a3 = sigmoid( z3 ); % 5000 10
 
-Y = zeros( m, num_labels );
-for i = 1:m
-	Y( i, y( i ) ) = 1;
-end
+Y = eye( num_labels ) ( y, : ); % 5000 10
+%Y = zeros( m, num_labels );
+%for i = 1:m
+%	Y( i, y( i ) ) = 1;
+%end
 
-J = -sum( sum( Y .* log( hip ) + ( 1 - Y ) .* log( 1 - hip ) ) ) / m;
+J = -sum( sum( Y .* log( a3 ) + ( 1 - Y ) .* log( 1 - a3 ) ) ) / m;
 R = lambda * ( sum( sum( Theta1( :, 2:end ) .^2 ) ) + sum( sum( Theta2( :, 2:end ) .^2 ) ) ) / ( 2 * m );
 J = J + R;
 
+delta3 = a3 .- Y; % 5000 10
+%size( delta3 )
 
+%tempTheta2 = Theta2( :, 2:end );
+%size( tempTheta2 )
+%size( z2 )
+%size( Theta2' * delta3 )
+%delta2 = ( Theta2' * delta3 );
+%delta2 = delta2 .* sigmoidGradient( z2 );
+delta2 = ( delta3 * Theta2 )( :, 2:end ) .* sigmoidGradient( z2 ); % 5000 25
+D1 = delta2' * a1;
+D2 = delta3' * a2;
+%size( D1 ) % 25 401
+%size( D2 ) % 10 25
+D1( :, 2:end ) = D1( :, 2:end ) .+ lambda * Theta1( :, 2:end );
+D2( :, 2:end ) = D2( :, 2:end ) .+ lambda * Theta2( :, 2:end );
+
+Theta1_grad = D1 / m ;
+Theta2_grad = D2 / m;
+%Theta2_grad( :, 2:end ) = Theta2_grad( :, 2:end ) .+ lambda * Theta2( :, 2:end );
+%size( Theta1_grad ) % 25 401
+%size( Theta2_grad ) % 10 25
+
+
+
+%size( delta3 )
+%size( a2 )
+%size( delta2 )
+%size( X )
 
 
 
@@ -90,9 +127,10 @@ J = J + R;
 % -------------------------------------------------------------
 
 % =========================================================================
-
+%size( Theta1_grad )
+%size( Theta2_grad )
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
+%size( grad )
 
 end
