@@ -40,42 +40,27 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
-%for i = 1:num_movies
-%	for j = 1:num_users
-%		if( R( i, j ) == 1 )
-%			J = J + ( ( ( X( i, : ) * Theta( j, : )' ) - Y( i, j ) ) ^ 2 );
-%		end
-%	end
-%end
-%J = J / 2;
+%compute cost
 
-J = sum( sum( R .* ( ( X * Theta' -  Y ) .^ 2 ) ) ) / 2;
+delta = (X * Theta' - Y) .* R;
 
-for i = 1:num_movies
-	idx = find(R(i, :)==1);
-	Thetatemp = Theta(idx, :);
-	Ytemp = Y(i, idx);
-	X_grad(i, :) = (X(i, :) * Thetatemp' - Ytemp) * Thetatemp;
-end
+J = sum(sum(delta .^ 2)) * 0.5;
 
-for i = 1:num_users
-	idx = find(R( :, i )==1)
-	Thetatemp = Theta( :, idx' );
-	Ytemp = Y( idx', i );
-	Xtemp = X( idx', i );
-	Theta_grad(i, :) = (X(i, :) * Thetatemp' - Ytemp) * Xtemp;
-end
+%compute gradients
 
+Theta_grad = delta' * X;
 
+X_grad = delta * Theta;
 
+%regularized cost
 
+J += lambda/2 * (sum(sum(Theta.^2))) + lambda/2 * (sum(sum(X.^2)));
 
+%regularized gradient
 
+Theta_grad += lambda * Theta;
 
-
-
-
-
+X_grad += lambda * X;
 
 % =============================================================
 
