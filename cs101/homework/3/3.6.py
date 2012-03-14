@@ -40,7 +40,6 @@
 #crawl_web("http://www.udacity.com/cs101x/index.html",3) => ['http://www.udacity.com/cs101x/index.html', 'http://www.udacity.com/cs101x/flying.html', 'http://www.udacity.com/cs101x/walking.html']
 #crawl_web("http://www.udacity.com/cs101x/index.html",500) => ['http://www.udacity.com/cs101x/index.html', 'http://www.udacity.com/cs101x/flying.html', 'http://www.udacity.com/cs101x/walking.html', 'http://www.udacity.com/cs101x/crawling.html', 'http://www.udacity.com/cs101x/kicking.html']
 
-"""
 def get_page(url):
     try:
         if url == "http://www.udacity.com/cs101x/index.html":
@@ -55,7 +54,6 @@ def get_page(url):
         return ""
     return ""
 """
-
 import urllib2
 def get_page(url):
     try:
@@ -67,6 +65,7 @@ def get_page(url):
     except:
         print "except"
         return ""
+"""
 
 def get_next_target(page):
     start_link = page.find('<a href=')
@@ -99,13 +98,16 @@ def crawl_web(seed,max_pages):
     tocrawl = [seed]
     crawled = []
     while tocrawl:
-        if len( crawled ) >= max_pages:
-            break
         page = tocrawl.pop()
-        if page not in crawled:
+        if page not in crawled and len( crawled ) < max_pages:
             union(tocrawl, get_all_links(get_page(page)))
             crawled.append(page)
     return crawled
-    
-#print crawl_web("http://www.udacity.com/cs101x/index.html", 6000 )
-print crawl_web("http://www.microsoft.com/en-us/default.aspx", 60 )
+
+print crawl_web("http://www.udacity.com/cs101x/index.html", 0 )
+print crawl_web("http://www.udacity.com/cs101x/index.html", 1 )
+print crawl_web("http://www.udacity.com/cs101x/index.html", 2 )
+print crawl_web("http://www.udacity.com/cs101x/index.html", 3 )
+print crawl_web("http://www.udacity.com/cs101x/index.html", 4 )
+print crawl_web("http://www.udacity.com/cs101x/index.html", 5 )
+print crawl_web("http://www.udacity.com/cs101x/index.html", 60 )
