@@ -31,10 +31,25 @@
 #returned list should be a list of the numbers at the corresponding row in the
 #triangle.
 
+def factorial( n ):
+    if n == 0:
+        return 1
+    return n * factorial( n - 1 )
+
+def get_pascal_number( k, n ):
+    return factorial( n ) / ( factorial( k ) * factorial( n - k ) )
+
+def row( n ):
+    res = []
+    for i in range( 1, n + 1 ):
+        res.append( get_pascal_number( i, n ) )
+    return res
+
 def triangle(n):
-    current = []
-    after = [ [1] ]
-    for i in range( 0, n ):
+    res = []
+    for i in range( 1, n + 1 ):
+        res.append( row( i ) )
+    return res
         
 
 
