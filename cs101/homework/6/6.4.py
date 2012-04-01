@@ -20,16 +20,17 @@ def is_list(p):
 
 def deep_count(p):
     total = 0
-    for i in p:
-        total += 1
-        if is_list( i ):
-            total += deep_count( i )
+    if is_list( p ):
+        for i in p:
+            total += 1
+            if is_list( i ):
+                total += deep_count( i )
     return total
 
 
 
 
-print deep_count([])
+print deep_count('str')
 
 
 print deep_count([1, 2, 3])
