@@ -32,23 +32,41 @@
 #is not usually a good choice, since it means if the input list is already
 #nearly sorted, the actual work will be much worse than expected).
 
+def choose_first_pivot( array, left, right ):
+    return left
+
+def partioning( array, left, right, pivot_index ):
+    array[left], array[pivot_index] = array[pivot_index], array[left]
+    pivot = array[left]
+    i = left + 1
+    for j in range( left + 1, right + 1 ):
+        if array[j] < pivot:
+            array[i], array[j] = array[j], array[i]
+            i += 1
+    array[left], array[i - 1] = array[i - 1], array[left]
+    return i - 1 - left, right - i + 1
+
+
+def quick_sort( array, left, right, choose_pivot ):
+    if ( right - left ) > 0:
+        pivot_index = choose_pivot( array, left, right )
+        left_size, right_size = partioning( array, left, right, pivot_index )
+        quick_sort( array, left,                 left + left_size - 1, choose_pivot )
+        quick_sort( array, left + left_size + 1, right,                choose_pivot )
+
 def sorted_pages( pages ):
-    ranks = sorted( pages, reverse=True )
+    ranks = pages.keys()
+    quick_sort( ranks, 0, len( ranks ) - 1, choose_first_pivot )
+    ranks.reverse()
+
     s_p = []
     for rank in ranks:
         s_p.append( pages[rank] )
-    return s_p
+        
+    if s_p:
+        return s_p
+    return None
 
-
-"""
-def sorted_pages( pages ):
-    sorted_pages = []
-    ranks = pages.keys()
-    ranks.sort()
-    #for rank in ranks:
-        #sorted_pages.
-    return ranks
-"""
 def ordered_search(index, ranks, keyword):
     pages = {}
     if keyword in index:
