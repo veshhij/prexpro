@@ -1,5 +1,3 @@
-total = 0
-
 def bigger(a,b):
     if a > b:
         return a
@@ -75,7 +73,7 @@ count( A, choose_last_pivot )
 print A
 """
 
-N= []
+N = []
 with open( 'QuickSort.txt', 'r' ) as f:
     numbers = f.readlines()
     N = map( to_int, numbers )
