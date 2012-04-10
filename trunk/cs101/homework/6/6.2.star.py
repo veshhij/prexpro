@@ -32,22 +32,23 @@
 #triangle.
 
 def factorial( n ):
-    if n == 0:
+    if n < 2:
         return 1
     return n * factorial( n - 1 )
 
 def get_pascal_number( k, n ):
-    return factorial( n ) / ( factorial( k ) * factorial( n - k ) )
+    r = factorial( n ) / factorial( k ) / factorial( n - k )
+    return int( r )
 
 def row( n ):
     res = []
-    for i in range( 1, n + 1 ):
+    for i in range( 0, n + 1 ):
         res.append( get_pascal_number( i, n ) )
     return res
 
 def triangle(n):
     res = []
-    for i in range( 1, n + 1 ):
+    for i in range( 0, n ):
         res.append( row( i ) )
     return res
         
