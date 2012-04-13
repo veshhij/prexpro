@@ -6,7 +6,7 @@
 using std::ifstream;
 using std::istringstream;
 using std::vector;
-using stdext::hash_map;
+using std::stack;
 using std::for_each;
 using std::istream_iterator;
 using std::back_insert_iterator;
@@ -133,17 +133,13 @@ namespace std
 
 struct Node
 {
-    uint            order;
     vector<uint>    to;
     vector<uint>    from;
-    //bool            forward_explored;
-    //bool            backward_explored;
 };
 
 vector<bool>* explored = NULL;
 vector<uint>* leaders = NULL;
-vector<uint>* orders = NULL;
-uint order = 0;
+stack<uint> order;
 uint leader = 0;
 
 void FirstPassDfs( vector<Node>& graph, uint i )
@@ -154,17 +150,16 @@ void FirstPassDfs( vector<Node>& graph, uint i )
         if( !(*explored)[arc] )
             FirstPassDfs( graph, arc );
     }
-    (*orders)[--order] = i;
-    graph[i].order = order;
+    order.push( i );
 }
 
 void SecondPassDfs( vector<Node>& graph, uint i )
 {
-    (*explored)[graph[i].order] = true;
+    (*explored)[i] = true;
     (*leaders)[i] = leader;
     for each( uint arc in graph[i].to )
     {
-        if( !(*explored)[graph[arc].order] )
+        if( !(*explored)[arc] )
             SecondPassDfs( graph, arc );
     }
 }
@@ -180,12 +175,9 @@ void pq4( int argc, _TCHAR* argv[] )
     //vector<uint> f( data[data.size() - 1 ].tail + 1 );
     explored = new vector<bool>( graph_size );
     leaders = new vector<uint>( graph_size );
-    orders = new vector<uint>( graph_size );
-    order = graph_size; 
 
     for each( Arc arc in data )
     {
-        graph[arc.tail].order = 0;
         graph[arc.tail].to.push_back( arc.head );
         graph[arc.head].from.push_back( arc.tail );
     }
@@ -197,7 +189,7 @@ void pq4( int argc, _TCHAR* argv[] )
     Node* s = NULL;
 
     uint i;
-    for( i = graph_size - 1; i > 0; --i )
+    for( i = 1; i < graph_size; ++i )
     {
         if( !(*explored)[i] )
         {
@@ -208,10 +200,11 @@ void pq4( int argc, _TCHAR* argv[] )
     delete explored;
     explored = new vector<bool>( graph_size );
 
-    for( i = 1; i < graph_size; ++i )
+    while( !order.empty() )
     {
-        uint node = (*orders)[i];
-        if( !(*explored)[graph[node].order] )
+        uint node = order.top();
+        order.pop();
+        if( !(*explored)[node] )
         {
             leader = node;
             SecondPassDfs( graph, node );
