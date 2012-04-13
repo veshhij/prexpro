@@ -20,4 +20,6 @@
 #include <fstream>
 #include <iterator>
 #include <vector>
-#include <hash_map>
+#include <stack>
+#include <functional>
+
