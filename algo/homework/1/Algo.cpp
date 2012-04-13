@@ -79,7 +79,12 @@ void ReadDataFile( _TCHAR* pFilename, vector<T>* data )
     {
         //std::stringstream buffer;
         //buffer << inFile.rdbuf();
-        std::copy( istream_iterator<T>( inFile/*buffer*/ ), istream_iterator<T>(), back_insert_iterator<vector<T> >( *data ) );
+        std::copy(
+            istream_iterator<T>( inFile/*buffer*/ ),
+            istream_iterator<T>(),
+            //back_insert_iterator<vector<T> >( *data )
+            back_inserter( *data )
+            );
         inFile.close();
     }
 }
@@ -142,15 +147,11 @@ struct Node
 
 struct CSCC
 {
-    CSCC( uint size ) : graph( size ), explored( NULL ), leaders( NULL ), leader( 0 )
+    CSCC( uint size ) : graph( size ), explored( size ), leaders( size ), leader( 0 )
     {
-        explored = new vector<bool>( graph.size() );
-        leaders = new vector<uint>( graph.size() );
     }
     ~CSCC()
     {
-        delete explored;
-        delete leaders;
     }
     CSCC& BuildGraph( const vector<Arc>& data );
     CSCC& FirstPass();
@@ -163,8 +164,8 @@ private:
     void DfsFromNR( uint node );
 private:
     vector<Node> graph;
-    vector<bool>* explored;
-    vector<uint>* leaders;
+    vector<bool> explored;
+    vector<uint> leaders;
     stack<uint> order;
     uint leader;
 };
@@ -184,7 +185,7 @@ CSCC& CSCC::FirstPass()
     uint i;
     for( i = 1; i < graph.size(); ++i )
     {
-        if( !(*explored)[i] )
+        if( !explored[i] )
         {
             DfsFrom( i );
             //DfsFromNR( i );
@@ -195,14 +196,14 @@ CSCC& CSCC::FirstPass()
 
 CSCC& CSCC::SecondPass()
 {
-    delete explored;
-    explored = new vector<bool>( graph.size() );
+    vector<bool> new_explored( graph.size() );
+    new_explored.swap( explored );
 
     while( !order.empty() )
     {
         uint node = order.top();
         order.pop();
-        if( !(*explored)[node] )
+        if( !explored[node] )
         {
             leader = node;
             DfsTo( node );
@@ -215,11 +216,11 @@ CSCC& CSCC::SecondPass()
 CSCC& CSCC::GetResult( uint count )
 {
     vector<uint> scc( graph.size() );
-    for each( uint arc in *leaders )
+    for each( uint arc in leaders )
     {
         scc[arc]++;
     }
-    //std::sort( scc.begin(), scc.end(), std::greater<uint>( ) );
+
     priority_queue<uint> pq( scc.begin(), scc.end() );
     while ( !pq.empty( ) )
     {
@@ -239,14 +240,14 @@ void CSCC::DfsToNR( uint node )
     {
         node = nodes.top();
 
-        (*leaders)[node] = leader;
+        leaders[node] = leader;
 
-        if( !(*explored)[node] )
+        if( !explored[node] )
         {
-            (*explored)[node] = true;
+            explored[node] = true;
             for each( uint arc in graph[node].to )
             {
-                if( !(*explored)[arc] )
+                if( !explored[arc] )
                     nodes.push( arc );
             }
         }
@@ -259,12 +260,12 @@ void CSCC::DfsToNR( uint node )
 
 void CSCC::DfsTo( uint node )
 {
-    (*leaders)[node] = leader;
+    leaders[node] = leader;
 
-    (*explored)[node] = true;
+    explored[node] = true;
     for each( uint arc in graph[node].to )
     {
-        if( !(*explored)[arc] )
+        if( !explored[arc] )
             DfsTo( arc );
     }
 }
@@ -276,12 +277,12 @@ void CSCC::DfsFromNR( uint node )
     while( !nodes.empty() )
     {
         node = nodes.top();
-        if( !(*explored)[node] )
+        if( !explored[node] )
         {
-            (*explored)[node] = true;
+            explored[node] = true;
             for each( uint arc in graph[node].from )
             {
-                if( !(*explored)[arc] )
+                if( !explored[arc] )
                     nodes.push( arc );
             }
         }
@@ -295,10 +296,10 @@ void CSCC::DfsFromNR( uint node )
 
 void CSCC::DfsFrom( uint node )
 {
-    (*explored)[node] = true;
+    explored[node] = true;
     for each( uint arc in graph[node].from )
     {
-        if( !(*explored)[arc] )
+        if( !explored[arc] )
             DfsFrom( arc );
     }
 
@@ -318,6 +319,12 @@ void pq4( int argc, _TCHAR* argv[] )
     now = clock();
     std::cout << "ReadDataFile: " << (float)( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     past = now;
+
+    if( !data.size() )
+    {
+        std::cout << "No data for processing" << std::endl;
+        return;
+    }
 
     uint graph_size = data[data.size() - 1 ].tail + 1;
 
@@ -356,11 +363,11 @@ void pq4( int argc, _TCHAR* argv[] )
 
 int _tmain( int argc, _TCHAR* argv[] )
 {
-    int clo = clock();
+    int past = clock();
 
     //pq1( argc, argv );
     pq4( argc, argv );
 
-    std::cout << std::endl << "Run time: " << (float)( clock() - clo ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << std::endl << "Run time: " << (float)( clock() - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     return 0;
 }
