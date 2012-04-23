@@ -53,13 +53,28 @@ accepting2 = [2]
 # pairs) -- you'll have to write "edges[edge]" to get the destination list. 
 
 def nfsmaccepts(current, edges, accepting, visited):
+    print current, visited
+    string = ""
+    visited += [current]
+    for edge in edges:
+        if edge[0] == current:
+            string += edge[1]
+            print string
+            destinations = edges[(current, edge[1])]
+            for destination in destinations:
+                if destination in accepting:
+                    return string
+                if destination not in visited:
+                    nfsmaccepts( destination, edges, accepting, visited )
     return None
 
 # This problem includes some test cases to help you tell if you are on
 # the right track. You may want to make your own additional tests as well.
-print "Test 1: " + str(nfsmaccepts(1, edges, accepting, []) == "abc") 
+print "Test 1: " + str(nfsmaccepts(1, edges, accepting, []) == "abc")
+"""
 print "Test 2: " + str(nfsmaccepts(1, edges, [4], []) == "ab") 
 print "Test 3: " + str(nfsmaccepts(1, edges2, accepting2, []) == None) 
 print "Test 4: " + str(nfsmaccepts(1, edges2, [1], []) == "")
+"""
 
 
