@@ -50,6 +50,19 @@ def nfsmsim(string, current, edges, accepting):
         else:
             return False
 
+def nfsmsim_a(string, current, edges, accepting): 
+    if string == "":
+        return current in accepting
+    else:
+        letter = string[0]
+        if (current, letter) in edges:
+            remaining_string = string[1:]
+            destinations = edges[(current, letter)]
+            for destination in destinations:
+                if nfsmsim(remaining_string, destination, edges, accepting):
+                    return True
+        return False
+
 # This problem includes some test cases to help you tell if you are on
 # the right track. You may want to make your own additional tests as well.
 

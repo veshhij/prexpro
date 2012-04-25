@@ -77,14 +77,28 @@ def nfsmaccepts(current, edges, accepting, visited):
         return ret
     return None
 
+def nfsmaccepts_a(current, edges, accepting, visited):
+    if current in visited:
+        return None
+    elif current in accepting:
+        return ""
+    else:
+        newvisited = visited + [current]
+        for edge in edges:
+            if edge[0] == current:
+                for newstate in edges[edge]:
+                    foo = nfsmaccepts_a( newstate, edges, accepting, newvisited )
+                    if foo != None:
+                        return edge[1] + foo
+        return None
 
 # This problem includes some test cases to help you tell if you are on
 # the right track. You may want to make your own additional tests as well.
 #"""
-print "Test 1: " + str(nfsmaccepts(1, edges, accepting, []) == "abc")
-print "Test 2: " + str(nfsmaccepts(1, edges, [4], []) == "ab") 
-print "Test 3: " + str(nfsmaccepts(1, edges2, accepting2, []) == None) 
+print "Test 1: " + str(nfsmaccepts_a(1, edges, accepting, []) == "abc")
+print "Test 2: " + str(nfsmaccepts_a(1, edges, [4], []) == "ab") 
+print "Test 3: " + str(nfsmaccepts_a(1, edges2, accepting2, []) == None) 
 #"""
-print "Test 4: " + str(nfsmaccepts(1, edges2, [1], []) == "")
+print "Test 4: " + str(nfsmaccepts_a(1, edges2, [1], []) == "")
 
 
