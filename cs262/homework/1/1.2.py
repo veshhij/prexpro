@@ -22,6 +22,12 @@ def sumnums(sentence):
 
 # This problem includes an example test case to help you tell if you are on
 # the right track. You may want to make your own additional tests as well.
+def sumnums_a(sentence):
+    sums = 0
+    for found in re.findall( r"[0-9]+", sentence ):
+        sums += int( found )
+    return sums
+
 
 test_case_input = """The Act of Independence of Lithuania was signed 
 on February 16, 1918, by 20 council members."""
@@ -33,3 +39,5 @@ if sumnums(test_case_input) == test_case_output:
 else:
   print "Test case failed:" 
   print sumnums(test_case_input) 
+
+print sumnums_a(test_case_input)
