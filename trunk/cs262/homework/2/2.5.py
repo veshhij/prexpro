@@ -33,10 +33,15 @@
 javascriptcode="""
 function gcd(a,b) {
     //Write Code Here
-if (b == 0)
-   {return a}
- else
-   {return gcd(b, a % b)}
+if( a == b ) {
+    return a;
+}
+if( a > b ) {
+    return gcd(a-b,b);
+}
+if( a < b ) {
+    return gcd(a,b-a);
+}
 }
 
 write( gcd(24,8) == 8 ); 
