@@ -62,6 +62,22 @@ tokens = (
 #
 # Write your code here. 
 #
+def t_eolcomment(token):
+  r'//[^\n]*'
+  pass
+
+def t_comment(token):
+  r'/\*'
+  token.lexer.begin('comment')
+
+def t_comment_end(token):
+  r'\*/'
+  token.lexer.lineno += token.value.count('\n')
+  token.lexer.begin('INITIAL')
+
+def t_comment_error(token):
+  token.lexer.skip(1)
+
 def t_ANDAND(token):
   r'&&'
   token.type = 'ANDAND'
@@ -191,6 +207,12 @@ def t_VAR(token):
   r'var'
   token.type = 'VAR'
   return token
+
+states = (
+  ( 'comment', 'exclusive' ),
+)
+
+t_comment_ignore = ' \t\v\r'
 
 t_ignore = ' \t\v\r' # whitespace 
 
