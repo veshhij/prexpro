@@ -317,7 +317,7 @@ void pq4( int argc, _TCHAR* argv[] )
     ReadDataFile( argv[1], &data );
 
     now = clock();
-    std::cout << "ReadDataFile: " << (float)( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "ReadDataFile: " << float( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     past = now;
 
     if( !data.size() )
@@ -331,31 +331,31 @@ void pq4( int argc, _TCHAR* argv[] )
     CSCC cscc( graph_size );
 
     now = clock();
-    std::cout << "CSCC cscc: " << (float)( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "CSCC cscc: " << float( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     past = now;
 
     cscc.BuildGraph( data );
 
     now = clock();
-    std::cout << "BuildGraph: " << (float)( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "BuildGraph: " << float( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     past = now;
 
     cscc.FirstPass();
 
     now = clock();
-    std::cout << "FirstPass: " << (float)( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "FirstPass: " << float( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     past = now;
 
     cscc.SecondPass();
 
     now = clock();
-    std::cout << "SecondPass: " << (float)( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "SecondPass: " << float( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     past = now;
 
     cscc.GetResult( 5 );
 
     now = clock();
-    std::cout << "GetResult: " << (float)( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "GetResult: " << float( now - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     past = now;
 }
 
@@ -368,6 +368,6 @@ int _tmain( int argc, _TCHAR* argv[] )
     //pq1( argc, argv );
     pq4( argc, argv );
 
-    std::cout << std::endl << "Run time: " << (float)( clock() - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << std::endl << "Run time: " << double( clock() - past ) / CLOCKS_PER_SEC << " seconds" << std::endl;
     return 0;
 }
